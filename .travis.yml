@@ -1,0 +1,19 @@
+language: c++
+os:
+- linux
+sudo: required
+group: travis_lts
+git:
+  depth: 1000000
+env:
+  global:
+    - secure: "FE53o2h/+ZF1H/Zkp4/xiIPmbmXlnm2sRkwhYgQk3SeA2UG3Bj9mqHcn4S8jqtzZyRWHdSeJZQeoaBPHSBGLPBKk6uXCc7IV7wWn8cf/UPsJvNAPBgvdFykgEAUM/prkNAo/rW774rU83sL8niDZE7DIevbmbkOBSFWOnkoLI6Qkmb9B1lt3amaPaucfdiKnGruRpjCdG9Yao8QI7skhFbVpicYGQfEYA5RMztuXxso3RlHgn/TtXxFc0u15+/0hyzlCFJnemTbufOnK/Vh/VRm2BPVVZhAKV6gebDlrJuxzZC79tzyoSCtjQVRrs6HRkM4in7W2/fLZtxA4cxFf/Xu1C6aI7UXs5j7fGkI0HXgDklZ4tvV6iQ55LbYp+TpQzwXumgOfEMtv+acV7Fz34jfstIhSV3kVseYNOGl1ZWoEgmpmpqhPElA1Om2lOwF4GTXzRzEBYfVmmLrIoaVLhnqRLBed1GcWVDUiXBBqIuME2itPh3lg1An6HwLjihKL925ANNUF3Rqxi/XNpTbER+krNoI5hca+fGhTF8mm994ElcyLhflKCYGNEMNbJ5EDCwg7JBV2A6uISY9Kp4xZX2ulUbwcmd1s6lfw3kfy0U79s1jLcjBv6n0QuvuTZW2iZAsoO/Mq8Tl5xd9CyJbbao3QpFa1My+2RZZLXNjC15A="
+    - apiuser=joerghall
+
+script:
+- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then docker run -v ${TRAVIS_BUILD_DIR}:/root/cbt-tool-ninja
+  -e apipwd -e apiuser -e TRAVIS_BRANCH --rm -t jhhj/cbt-pypack-centos7:1 /bin/bash
+  -c "mkdir /root/cbt-tool-ninja/build && cd /root/cbt-tool-ninja/build && export PATH=/opt/rh/devtoolset-6/root/usr/bin:$PATH
+  && cmake -DCMAKE_BUILD_TYPE=Release .. && cmake --build . --target publish_ninja"
+  ; fi
+
