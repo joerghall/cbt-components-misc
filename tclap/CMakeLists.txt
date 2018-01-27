@@ -24,28 +24,36 @@
 #
 cmake_minimum_required(VERSION 3.5)
 
-# Ninja specifics
+# tclap specifics
 #
 set(PACKAGE_VERSION 1.2.2)
 set(PACKAGE_NAME tclap)
 set(PACKAGE_VERSION_PACKAGE ${PACKAGE_VERSION}.${VERSION_REVISION}.r${VERSION_SHORTHASH})
 set(PACKAGE_PUBLISH_URL https://h1grid.com:443/artifactory/cbt/components)
-MESSAGE(STATUS "Building package version ${PACKAGE_NAME}-${PACKAGE_VERSION_PACKAGE}-noarch.tgz")
+
+message(STATUS "Building package version ${PACKAGE_NAME}-${PACKAGE_VERSION_PACKAGE}-noarch.tgz")
 
 set(PACKAGE_SOURCE_SOURCE_URL https://sourceforge.net/projects/tclap/files/tclap-${PACKAGE_VERSION}.tar.gz)
 set(PACKAGE_SOURCE_TARGET_FILE ${SOURCE_DOWNLOAD_DIR}/tclap-${PACKAGE_VERSION}.tar.gz)
 
 add_custom_target(download_${PACKAGE_NAME}
     COMMAND ${CMAKE_COMMAND} -E make_directory ${SOURCE_DOWNLOAD_DIR}
-    COMMAND git clone https://git.code.sf.net/p/tclap/code tclap
     COMMAND ${CMAKE_COMMAND} -DSOURCE=${PACKAGE_SOURCE_SOURCE_URL} -DTARGET=${PACKAGE_SOURCE_TARGET_FILE} -P ${download_COMMAND}
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
 )
 
 add_custom_target(unpack_${PACKAGE_NAME}
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${SOURCE_SRC_DIR}/windows/${PACKAGE_NAME}/${PACKAGE_VERSION_PACKAGE}/noarch
-    COMMAND ${CMAKE_COMMAND} -P ${untar_COMMAND} --file ${PACKAGE_SOURCE_TARGET_FILE} --target ${SOURCE_SRC_DIR}/${PACKAGE_NAME}/${PACKAGE_NAME}/${PACKAGE_VERSION_PACKAGE}/noarch
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${SOURCE_SRC_DIR}
+    COMMAND ${CMAKE_COMMAND} -DSOURCE=${PACKAGE_SOURCE_TARGET_FILE} -DTARGET=${SOURCE_SRC_DIR} -P ${untar_COMMAND}
     DEPENDS download_${PACKAGE_NAME}
+)
+
+add_custom_target(install_${PACKAGE_NAME}
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${SOURCE_INSTALL_DIR}/${PACKAGE_NAME}/${PACKAGE_VERSION_PACKAGE}/noarch/include
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${SOURCE_SRC_DIR}/${PACKAGE_NAME}-${PACKAGE_VERSION}/include/tclap ${SOURCE_INSTALL_DIR}/${PACKAGE_NAME}/${PACKAGE_VERSION_PACKAGE}/noarch/include/tclap
+    COMMAND ${CMAKE_COMMAND} -E remove -f ${SOURCE_INSTALL_DIR}/${PACKAGE_NAME}/${PACKAGE_VERSION_PACKAGE}/noarch/include/tclap/Makefile.*
+    COMMAND ${CMAKE_COMMAND} -E copy ${cbt_LOCATION}/cmake/components/templates/${PACKAGE_NAME}.cmake ${SOURCE_INSTALL_DIR}/${PACKAGE_NAME}/${PACKAGE_VERSION_PACKAGE}/noarch/cbt-component.cmake
+    DEPENDS unpack_${PACKAGE_NAME}
 )
 
 add_custom_target(package_${PACKAGE_NAME}
@@ -53,7 +61,6 @@ add_custom_target(package_${PACKAGE_NAME}
     COMMAND ${CMAKE_COMMAND} -P ${untar_COMMAND} --source ${SOURCE_UPLOAD_DIR}/${PACKAGE_NAME}-${PACKAGE_VERSION_PACKAGE}-noarch.tgz ${SOURCE_SRC_DIR}/${PACKAGE_NAME}/${PACKAGE_NAME}
     DEPENDS unpack_${PACKAGE_NAME}
 )
-
 
 add_custom_target(publish_${PACKAGE_NAME}
     COMMAND ${python2_BIN} ${upload_py_COMMAND} --file ${SOURCE_UPLOAD_DIR}/${PACKAGE_NAME}-${PACKAGE_VERSION_PACKAGE}-noarch.tgz --url ${PACKAGE_PUBLISH_URL}/${PACKAGE_NAME}/${PACKAGE_VERSION_PACKAGE}/${PACKAGE_NAME}-${PACKAGE_VERSION_PACKAGE}-windows.tgz
