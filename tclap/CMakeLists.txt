@@ -59,7 +59,7 @@ add_custom_target(install_${PACKAGE_NAME}
 add_custom_target(package_${PACKAGE_NAME} ALL
     COMMAND ${CMAKE_COMMAND} -E make_directory ${SOURCE_UPLOAD_DIR}
     COMMAND ${CMAKE_COMMAND} -DTARGET=${SOURCE_UPLOAD_DIR}/${PACKAGE_NAME}-${PACKAGE_VERSION_PACKAGE}-noarch.tgz -DSOURCE=${SOURCE_SRC_DIR}/${PACKAGE_NAME}/${PACKAGE_NAME} -P ${tar_COMMAND}
-    DEPENDS unpack_${PACKAGE_NAME}
+    DEPENDS install_${PACKAGE_NAME}
 )
 
 add_custom_target(publish_${PACKAGE_NAME}
