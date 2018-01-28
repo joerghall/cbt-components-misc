@@ -7,13 +7,12 @@ git:
   depth: 1000000
 env:
   global:
-    - secure: "FE53o2h/+ZF1H/Zkp4/xiIPmbmXlnm2sRkwhYgQk3SeA2UG3Bj9mqHcn4S8jqtzZyRWHdSeJZQeoaBPHSBGLPBKk6uXCc7IV7wWn8cf/UPsJvNAPBgvdFykgEAUM/prkNAo/rW774rU83sL8niDZE7DIevbmbkOBSFWOnkoLI6Qkmb9B1lt3amaPaucfdiKnGruRpjCdG9Yao8QI7skhFbVpicYGQfEYA5RMztuXxso3RlHgn/TtXxFc0u15+/0hyzlCFJnemTbufOnK/Vh/VRm2BPVVZhAKV6gebDlrJuxzZC79tzyoSCtjQVRrs6HRkM4in7W2/fLZtxA4cxFf/Xu1C6aI7UXs5j7fGkI0HXgDklZ4tvV6iQ55LbYp+TpQzwXumgOfEMtv+acV7Fz34jfstIhSV3kVseYNOGl1ZWoEgmpmpqhPElA1Om2lOwF4GTXzRzEBYfVmmLrIoaVLhnqRLBed1GcWVDUiXBBqIuME2itPh3lg1An6HwLjihKL925ANNUF3Rqxi/XNpTbER+krNoI5hca+fGhTF8mm994ElcyLhflKCYGNEMNbJ5EDCwg7JBV2A6uISY9Kp4xZX2ulUbwcmd1s6lfw3kfy0U79s1jLcjBv6n0QuvuTZW2iZAsoO/Mq8Tl5xd9CyJbbao3QpFa1My+2RZZLXNjC15A="
+    - secure: "sMhrmxezhnWSvS+qHmvBRW4T2uvg2hIsDBOShtzXQMBBA1PbRz0heb9HQ4glsOi2R73A+oAaB/DENphb+sFpv0ImDT03YgtHZKb/VUfB0Bqt49vW7qipyA1snkoODuAWDvUPVYl/lwxwh1NRoNhQMfnUGpUcatE5/tW4Xe2cbSYGiDpUkgytRw4ClBvm0yPYnUswXd3tQ7zPJKd+sqimrlK/XG7PmaEo7REqnu77dKMd1QxQgDZpHPsU0AfANO2rbydPcaZcI+NeRbRDGXvajg7OJ3VCTsf2HgmeualtXlxyQTTa/b0K3ClOm3SxI3RnOt9V5YyFm0AV4lEhX7c4lf5fp6hQ2lc5KAAE94JtJgFBMCdZu+c3rD0DWvC6CfIg0ns9luyTG5ItB0UUsYiah3aRQZMqGfP3lHj0D7MMGH5vldxBCr32kmGV6Qp8oV0rQcpmh+/gz57wVCJxqw/Ivojvw9vztLQR2qhbdRnZBak97G3eCMWlSVMpUcsMuwuXhszl12QnkZv7TPZI9w9gSbQaUL9+AHqMKG4bVe4bac9yX5xgL4fbZjOmxSWxvs5RPq29BgovSaIIjlXSTIMytvL5cJgo48hgLavApZ6BuBHWd1/c4xpGL/j+ciS/9gWr1tl3FIcDcZzICu6CgT5g2+KXELJrTsRkMmKkwpmNs2o="
     - apiuser=joerghall
 
 script:
-- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then docker run -v ${TRAVIS_BUILD_DIR}:/root/cbt-tool-ninja
+- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then docker run -v ${TRAVIS_BUILD_DIR}:/root/${TRAVIS_REPO_SLUG}
   -e apipwd -e apiuser -e TRAVIS_BRANCH --rm -t jhhj/cbt-pypack-centos7:1 /bin/bash
-  -c "mkdir /root/cbt-tool-ninja/build && cd /root/cbt-tool-ninja/build && export PATH=/opt/rh/devtoolset-6/root/usr/bin:$PATH
-  && cmake -DCMAKE_BUILD_TYPE=Release .. && cmake --build . --target publish_ninja"
+  -c "mkdir /root/${TRAVIS_REPO_SLUG}/build && cd /root/${TRAVIS_REPO_SLUG}/build && export PATH=/opt/rh/devtoolset-6/root/usr/bin:$PATH
+  && cmake -DCMAKE_BUILD_TYPE=Release .. && cmake --build . --target publish"
   ; fi
-

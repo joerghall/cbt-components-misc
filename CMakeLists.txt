@@ -72,6 +72,12 @@ list(LENGTH VERSION_DATA VERSION_REVISION)
 list(GET VERSION_DATA 0 VERSION_HASH)
 string(SUBSTRING ${VERSION_HASH} 0 8 VERSION_SHORTHASH)
 
-add_subdirectory(tclap)
-add_subdirectory(nlohmann_json)
 add_subdirectory(catch2)
+add_subdirectory(nlohmann_json)
+add_subdirectory(tclap)
+
+add_custom_target(publish ALL DEPENDS
+    publish_tclap
+    publish_catch2
+    publish_nlohmann_json
+)
